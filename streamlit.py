@@ -98,7 +98,7 @@ if uploaded_results and uploaded_sites:
         
         if not trend_data.empty:
             fig = px.line(trend_data, x="ActivityStartDate", y="ResultMeasureValue", color="MonitoringLocationIdentifier", 
-                          title=f"Trend of {selected_contaminant} Over Time")
+                            title=f"Trend of {selected_contaminant} Over Time")
             st.plotly_chart(fig)
         else:
             st.warning("Insufficient data to generate trend plot.")
