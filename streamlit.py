@@ -63,6 +63,7 @@ if uploaded_results and uploaded_sites:
 
     # Select Date Range
     df["ActivityStartDate"] = pd.to_datetime(df["ActivityStartDate"])  # Ensure correct datetime format
+    # Test for Cont Jump
     min_date, max_date = df["ActivityStartDate"].min(), df["ActivityStartDate"].max()
     start_date, end_date = st.sidebar.date_input("Select Date Range", [min_date, max_date], min_value=min_date, max_value=max_date)
 
@@ -97,6 +98,7 @@ if uploaded_results and uploaded_sites:
         trend_data = df_filtered.groupby(["ActivityStartDate", "MonitoringLocationIdentifier"])["ResultMeasureValue"].mean().reset_index()
         
         if not trend_data.empty:
+
             fig = px.line(trend_data, x="ActivityStartDate", y="ResultMeasureValue", markers=True, color="MonitoringLocationIdentifier", 
                           title=f"Trend of {selected_contaminant} Over Time")
             st.plotly_chart(fig)
