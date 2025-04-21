@@ -5,12 +5,12 @@ from streamlit_folium import folium_static
 import plotly.express as px
 
 # Streamlit App Title
-st.title("Water Quality Site Finder")
+st.title("Water Quality Database Finder")
 
 # Upload Water Quality Data
 st.sidebar.header("Upload Data Files")
-uploaded_results = st.sidebar.file_uploader("Upload USGS Water Quality CSV File", type=["csv"])
-uploaded_sites = st.sidebar.file_uploader("Upload USGS Site Locations CSV File", type=["csv"])
+uploaded_results = st.sidebar.file_uploader("Upload USGS Water Quality CSV File (narrowresult.csv)", type=["csv"])
+uploaded_sites = st.sidebar.file_uploader("Upload USGS Site Locations CSV File (station.csv)", type=["csv"])
 
 if uploaded_results and uploaded_sites:
     # Load datasets
@@ -39,7 +39,7 @@ if uploaded_results and uploaded_sites:
     st.sidebar.header("Filter Data")
 
     # Select Contaminant
-    selected_contaminant = st.sidebar.selectbox("Select Contaminant", sorted(df["CharacteristicName"].unique()))
+    selected_contaminant = st.sidebar.selectbox("Select Characteristic", sorted(df["CharacteristicName"].unique()))
 
     # Filter dataset for selected contaminant
     df_filtered_contaminant = df[df["CharacteristicName"] == selected_contaminant].copy()
@@ -52,7 +52,7 @@ if uploaded_results and uploaded_sites:
     if not df_filtered_contaminant.empty:
         min_value, max_value = df_filtered_contaminant["ResultMeasureValue"].min(), df_filtered_contaminant["ResultMeasureValue"].max()
         value_range = st.sidebar.slider(
-            "Select Contaminant Value Range", 
+            "Select Characteristic Value Range", 
             float(min_value) if pd.notna(min_value) else 0, 
             float(max_value) if pd.notna(max_value) else 1, 
             (float(min_value) if pd.notna(min_value) else 0, float(max_value) if pd.notna(max_value) else 1)
@@ -97,7 +97,7 @@ if uploaded_results and uploaded_sites:
         trend_data = df_filtered.groupby(["ActivityStartDate", "MonitoringLocationIdentifier"])["ResultMeasureValue"].mean().reset_index()
         
         if not trend_data.empty:
-            fig = px.line(trend_data, x="ActivityStartDate", y="ResultMeasureValue", color="MonitoringLocationIdentifier", 
+            fig = px.line(trend_data, x="ActivityStartDate", y="ResultMeasureValue", markers=True, color="MonitoringLocationIdentifier", 
                           title=f"Trend of {selected_contaminant} Over Time")
             st.plotly_chart(fig)
         else:
